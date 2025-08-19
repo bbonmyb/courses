@@ -1061,7 +1061,7 @@ elif geom == len(numbers)-2:
 else:
     sys.stdout.write('Не прогрессия')
 '''
-
+# Модуль 
 
 
 
