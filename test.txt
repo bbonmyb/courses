@@ -1,9 +1,0 @@
-Python
-Java
-Javascript
-C#
-C
-C++
-PHP
-R
-Objective-C
