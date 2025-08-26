@@ -330,6 +330,7 @@ sample(population, k) — k уникальных случайных элемен
 
 
 
+
 # мини-игра "числовая угадайка"
 """
 from random import *
