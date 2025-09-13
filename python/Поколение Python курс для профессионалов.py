@@ -2,7 +2,7 @@
 
 # конспект конспект конспект конспект конспект конспект конспект конспект конспект конспект конспект конспект конспект конспект конспект конспект
 
-# ------------------ Модуль datetime ------------------
+# ===== Модуль datetime =====
 """
 from datetime import *
 
@@ -135,7 +135,7 @@ datetime.MAXYEAR                         # максимальный год — 9
 # date + timedelta с неполными сутками округляется в сторону дней
 # timedelta / timedelta → float, // → int
 """
-# Модуль calendar
+# ===== Модуль calendar =====
 """
 Подробный разбор модуля calendar: атрибуты и функции
 
@@ -264,8 +264,289 @@ calendar.prmonth(2025, 8)
 calendar.prcal(2025)
 
 """
+# ===== Потоковый ввод stdin и вывод stdout =====
+"""
+# --- Потоковый ввод stdin ---
+# import sys
+# sys.stdin — поток для стандартного ввода (например, при запуске скрипта с данными из файла или пайпа)
+#
+# Варианты работы:
+# Все данные одной строкой:
+# data = sys.stdin.read()
+#
+# По строкам:
+# lines = sys.stdin.readlines()
+#
+# Построчно в цикле:
+# for line in sys.stdin:
+#     print(line)
+#
+# В обычных задачах для интерактивного ввода пользуются input()
+
+# --- Потоковый вывод stdout ---
+# print("text") — стандартный способ вывести в stdout
+#
+# import sys
+# sys.stdout.write("text\n") — запись в поток без автоперевода строк
+
+# --- Пример: чтение всех строк и вывод в обратном порядке ---
+# import sys
+# lines = sys.stdin.readlines()
+# for line in reversed(lines):
+#     sys.stdout.write(line)
+"""
+# ===== Работа с csv файлами =====
+"""
+# --- Открытие/создание текстового файла ---
+# with open('filename.txt', mode) as f:
+#     f.write('text')   # записать строку
+#     f.read()          # читать всё содержимое
+
+# --- Режимы ---
+# 'r'   — только чтение
+# 'w'   — запись с перезаписью
+# 'a'   — добавление (append)
+# 'x'   — создать новый файл
+
+# --- Форматы файлов ---
+# CSV (comma-separated values)       — данные разделены запятыми
+# TSV (tab-separated values)         — разделители табуляции (\t)
+# DSV (delimiter-separated values)   — любой символ-разделитель
+
+# --- Модуль csv ---
+import csv
+
+# --- Чтение CSV файла ---
+with open('products.csv', encoding='utf-8') as f:
+    reader = csv.reader(f, delimiter=',')
+    for row in reader:
+        print(row)
+
+# --- Запись CSV файла ---
+with open('out.csv', 'w', encoding='utf-8', newline='') as f:
+    writer = csv.writer(f)
+    writer.writerow(['name', 'price'])      # одна строка
+    writer.writerows([['apple', 70], ['banana', 50]])  # несколько строк
+
+# --- DictReader: чтение CSV как словаря ---
+with open('products.csv', encoding='utf-8') as f:
+    reader = csv.DictReader(f)
+    for row in reader:
+        print(row['Product'], row['Price'])
+
+# --- writerow, writerows: запись строковых и списочных данных ---
+with open('products.csv', 'w', encoding='utf-8', newline='') as f:
+    writer = csv.writer(f)
+    writer.writerow(['Product', 'Price'])
+    writer.writerows([['apple', 70], ['banana', 50]])
+
+# --- Пример с табуляцией (tsv) ---
+with open('data.tsv', encoding='utf-8') as f:
+    reader = csv.reader(f, delimiter='\t')
+    for row in reader:
+        print(row)
+
+# --- Пример с dsv, свой разделитель ---
+with open('data.dsv', encoding='utf-8') as f:
+    reader = csv.reader(f, delimiter='|')
+    for row in reader:
+        print(row)
+"""
+# ===== Работа с json файлами =====
+"""
 
 
+import json
+
+# --- Основы JSON и модуль json ---
+# JSON (JavaScript Object Notation) — текстовый формат для обмена данными.
+# Python предоставляет модуль json для сериализации (преобразования Python-объектов в JSON)
+# и десериализации (обратного преобразования JSON в Python-объекты).
+
+# --- Сериализация Python-объектов в JSON ---
+
+# json.dumps(obj, *, indent=None, sort_keys=False, separators=None, ensure_ascii=True)
+# Преобразует Python-объект `obj` в JSON-строку.
+# Параметры:
+# indent — количество пробелов для отступов (для красивого форматирования).
+# sort_keys — сортировать ключи словаря в алфавитном порядке.
+# separators — кортеж разделителей (между элементами и ключами), например (',', ':').
+# ensure_ascii — если True, не-ASCII символы будут экранироваться.
+
+# Пример:
+data = {'name': 'Иван', 'age': 30, 'skills': ['Python', 'Django']}
+json_string = json.dumps(data, indent=4, sort_keys=True, ensure_ascii=False)
+print(json_string)
+# Выводит красиво форматированную JSON-строку с сортированными ключами.
+
+
+# --- Запись JSON в файл ---
+
+with open('data.json', 'w', encoding='utf-8') as file:
+    json.dump(data, file, ensure_ascii=False, indent=4)
+# dump() сериализует и сразу записывает в файл.
+
+
+# --- Загрузка JSON из файла ---
+
+with open('data.json', 'r', encoding='utf-8') as file:
+    loaded_data = json.load(file)
+print(loaded_data)
+# load() читает JSON из файла и преобразует в Python-объекты.
+
+
+
+# --- Десериализация JSON из строки ---
+
+json_str = '{"name": "Иван", "age": 30}'
+obj = json.loads(json_str)
+# loads() десериализует из строки.
+
+
+
+# --- json.dumps с параметрами форматирования ---
+
+# indent — количество пробелов для отступов (красивый формат)
+json_pretty = json.dumps(data, indent=4, ensure_ascii=False)
+print(json_pretty)
+# {
+#     "name": "Иван",
+#     "age": 30,
+#     "skills": [
+#         "Python",
+#         "Django"
+#     ]
+# }
+
+# sort_keys — сортировка ключей словаря по алфавиту
+json_sorted = json.dumps(data, indent=4, sort_keys=True, ensure_ascii=False)
+print(json_sorted)
+# Ключи будут в алфавитном порядке: age, name, skills
+
+# separators — поменять разделители
+# по умолчанию (', ', ': ') — после запятой и двоеточия идут пробелы
+json_compact = json.dumps(data, separators=(',', ':'), ensure_ascii=False)
+print(json_compact)
+# {"name":"Иван","age":30,"skills":["Python","Django"]}
+
+# ensure_ascii=False — чтобы сохранять русские символы без экранирования
+
+
+
+# --- Таблица типов данных JSON ↔ Python ---
+
+# JSON             | Python
+# -----------------|---------
+# string           | str
+# number (int)     | int
+# number (float)   | float
+# true             | True
+# false            | False
+# null             | None
+# array            | list
+# object           | dict
+
+# --- Важные функции модуля json ---
+# dump(obj, fp, *, indent=None, sort_keys=False, ensure_ascii=True) - запись в файл
+# dumps(obj, *, indent=None, sort_keys=False, ensure_ascii=True) - в строку
+# load(fp) - чтение из файла
+# loads(s) - чтение из строки
+
+# --- Настройка форматирования: ---
+# indent — число пробелов для вывода JSON с отступами
+# sort_keys=True — сортирует ключи словаря по алфавиту
+# separators — кортеж из двух строк для разделения элементов и ключей (например (',', ':'))
+
+# --- Пример с настройками separators ---
+
+json.dumps(data, separators=(',', ':'), ensure_ascii=False)
+# Выведет JSON без пробелов после запятых и двоеточий.
+
+# --- Итог ---
+# Работа с JSON в Python проста и гибка благодаря модулю json, позволяющему удобно читать, записывать и преобразовывать данные.
+
+
+"""
+# ===== Работа с ZIP-файлами =====
+'''
+from zipfile import ZipFile, is_zipfile
+
+# --- Открытие и чтение архива ZIP ---
+with ZipFile('test.zip', 'r') as zip_file:
+    # Вывести таблицу с информацией о содержимом архива
+    zip_file.printdir()
+
+    print('\n----------------------------------------------------\n')
+
+    # Получить подробную информацию о каждом файле и папке (список объектов ZipInfo)
+    info = zip_file.infolist()
+
+    # Пример работы с объектом ZipInfo (6-й файл):
+    print(info[6].file_size)       # размер файла в байтах
+    print(info[6].compress_size)   # размер сжатого файла
+    print(info[6].filename)        # имя файла в архиве
+    print(info[6].date_time)       # дата и время добавления в архив
+
+    # Вывести имена некоторых файлов
+    print(info[8].filename)
+    print(info[10].filename)
+    print(info[12].filename)
+    print(info[13].filename)
+
+    print('\n----------------------------------------------------\n')
+
+    # Проверить, является ли элемент директорией (папкой)
+    print(info[0].is_dir())        # True если папка, иначе False
+    print(info[6].is_dir())
+
+    print('\n----------------------------------------------------\n')
+
+    # Получить список всех имён файлов и папок в архиве
+    name_list = zip_file.namelist()
+    print(*name_list, sep='\n')
+
+    print('\n----------------------------------------------------\n')
+
+    # Получить информацию о конкретном файле по имени (четвёртый с конца)
+    last_file = zip_file.getinfo(name_list[-4])
+    print(last_file.file_size)
+    print(last_file.compress_size)
+    print(last_file.filename)
+    print(last_file.date_time)
+
+    print('\n----------------------------------------------------\n')
+
+    # Чтение содержимого файла из архива (пример с декодированием из utf-8)
+    with zip_file.open('test/Разные файлы/astros.json') as file:
+        print(file.read().decode('utf-8'))
+
+# --- Запись файлов в архив ---
+# with ZipFile('archive.zip', mode='w') as zip_file:
+#     zip_file.write('program.py')                     # записать файл в архив с тем же именем
+#     zip_file.write('lse.jpeg')                       # записать файл
+#     print(zip_file.namelist())                       # список файлов в архиве
+                                                       # записать с переименованием
+#     zip_file.write('program.py', 'new_program.py')   # первый аргумент - это имя файла
+#     zip_file.write('lse.jpeg', 'lse1.jpeg')          # второй аргумент - это новое имя файла в архиве
+
+
+print('\n----------------------------------------------------\n')
+
+# --- Извлечение файлов из архива ---
+with ZipFile('test.zip', 'r') as zip_file:
+    # Извлечь один файл с указанием пути для распаковки
+    # ("название файла", "путь для извлечения")
+    zip_file.extract('test/Картинки/avatar.png', 'C:/Users/user/Desktop/coding/git-lessons/test')
+
+    # Извлечь весь архив в текущую папку (путь можно указать)
+    # ("путь для извлечения")
+    zip_file.extractall()
+
+print('\n----------------------------------------------------\n')
+
+# --- Проверка файла на архив ZIP ---
+print(is_zipfile('C:/Users/user/Desktop/coding/git-lessons/test.zip'))  # True или False
+'''
 
 # задачи задачи задачи задачи задачи задачи задачи задачи задачи задачи задачи задачи задачи задачи задачи задачи задачи задачи задачи задачи задачи
 
@@ -646,7 +927,7 @@ print(is_available_date(dates, some_date))
 """
 # Модуль 3.4
 # 18
-'''
+"""
 from datetime import timedelta, date
 
 
@@ -662,9 +943,9 @@ def num_of_sundays(year):
 
 
 print(num_of_sundays(768))
-'''
+"""
 # 19
-'''
+"""
 from datetime import timedelta, date
 
 d,m,y = map(int, input().split('.'))
@@ -672,9 +953,9 @@ Date = date(y,m,d)
 for i in range(2,12):
     print(Date.strftime('%d.%m.%Y'))
     Date += timedelta(days=i)
-'''
+"""
 # 20
-'''
+"""
 from datetime import datetime
 
 mas = [datetime.strptime(x, '%d.%m.%Y') for x in input().split()]
@@ -682,9 +963,9 @@ res = [abs(mas[i] - mas[i+1]).days for i in range(len(mas)-1)]
     
 print(res)
 
-'''
+"""
 # 21
-'''
+"""
 from datetime import datetime, timedelta
 
 def fill_up_missing_dates(dates):
@@ -702,9 +983,9 @@ def fill_up_missing_dates(dates):
 dates = ['01.11.2021', '07.11.2021', '04.11.2021', '03.11.2021']
 
 print(fill_up_missing_dates(dates))
-'''
+"""
 # 22
-'''
+"""
 from datetime import datetime, timedelta
 
 start, end = input(), input()
@@ -714,10 +995,10 @@ for i in range((end-start+timedelta(minutes=10)).seconds//60//55):
         end_moment = start + timedelta(minutes=45)
         print(f"{start.strftime('%H:%M')} - {end_moment.strftime('%H:%M')}")
         start = end_moment + timedelta(minutes=10)
-'''
+"""
 # Модуль 3.5
 # 1
-'''
+"""
 from datetime import date, time, datetime, timedelta
 from functools import reduce
 
@@ -736,9 +1017,9 @@ for tupl in data:
     res += (datetime.strptime(tupl[1], '%H:%M') - datetime.strptime(tupl[0], '%H:%M')).seconds//60
 
 print(res)
-'''
+"""
 # 2
-'''
+"""
 from datetime import datetime, timedelta
 
 weekdays_dict = {}
@@ -758,9 +1039,9 @@ while True:
         break
 
 [print(value) for key, value in sorted(weekdays_dict.items())]
-'''
+"""
 # 3
-'''
+"""
 from datetime import datetime, timedelta
 
 schedule = {
@@ -780,9 +1061,9 @@ if res <= 0 or res > all_min_shop:
     print('Магазин не работает')
 else:
     print(res)
-'''
+"""
 # 4
-'''
+"""
 from datetime import datetime, timedelta
 
 
@@ -794,9 +1075,9 @@ while start <= end:
     if start.weekday() != 0 and start.weekday() != 3:
         print(start.strftime('%d.%m.%Y'))
     start += timedelta(days=3)
-'''
+"""
 # 5
-'''
+"""
 #мой метод, почему-то светится ошибка, но делает всё норм
 from datetime import datetime, timedelta
 
@@ -808,8 +1089,8 @@ for i in range(len(employee_mas)):
 employee_mas_max = list(filter( lambda x: x[2] == min( employee_mas, key=lambda x: x[2])[2], employee_mas ))  # ищем самого взрослого сотрудника/сотрудников
 
 print([f"{datetime.strftime(employee_mas_max[0][2],'%d.%m.%Y')} {employee_mas_max[0][0]} {employee_mas_max[0][1]}", f"{datetime.strftime(employee_mas_max[0][2],'%d.%m.%Y')} {len(employee_mas_max)}"][len(employee_mas_max)!=1])
-'''
-'''
+"""
+"""
 #списал понравившееся решение
 from datetime import datetime
 
@@ -818,9 +1099,9 @@ for _ in range(int(input())):
     name, Date = input().rsplit(maxsplit=1)
     d.setdefault(datetime.strptime(Date, '%d.%m.%Y'), []).append(name)
 print( min(d).strftime('%d.%m.%Y'), [''.join(d[min(d)]) , len(d[min(d)]) ][ len(d[min(d)]) > 1 ] )
-'''
-# 6 
-'''
+"""
+# 6
+"""
 from datetime import datetime
 
 employee_dict = {}
@@ -832,9 +1113,9 @@ for _ in range(int(input())):
 res = sorted([datetime.strptime(k,'%d.%m.%Y') for k,v in employee_dict.items() if len(v) == len(employee_dict[max(employee_dict, key=lambda x: len(employee_dict[x]))])])
 
 [print(x.strftime('%d.%m.%Y')) for x in res]
-'''
+"""
 # 7
-'''
+"""
 from datetime import datetime, timedelta
 
 employee_dict = {}
@@ -853,9 +1134,9 @@ for k,v in employee_dict.items():
         break
 else:
     print('Дни рождения не планируются')
-'''
+"""
 # 8
-'''
+"""
 from datetime import datetime
 
 
@@ -887,8 +1168,8 @@ elif not res[0] and res[1] and not res[2]:
     print(f"До выхода курса осталось: {choose_plural(res[1],("час", "часа", "часов"))}")
 elif not res[0] and not res[1] and res[2]:
     print(f"До выхода курса осталось: {choose_plural(res[2],("минута", "минуты", "минут"))}")
-'''    
-'''
+"""
+"""
 import time
 
 def get_the_fastest_func(func, *args, d={}):
@@ -918,10 +1199,10 @@ def list_function(iterable):              # с использованием вс
 
 
 print(get_the_fastest_func([for_and_append, list_comprehension, list_function], range(100_000)))
-'''
+"""
 # Модуль 3.7
 # 13
-'''
+"""
 import calendar
 from datetime import date, timedelta
 
@@ -936,9 +1217,9 @@ def get_all_mondays(year):
     return res
 
 print(get_all_mondays(111))
-'''
+"""
 # 14
-'''
+"""
 import calendar
 from datetime import date
 
@@ -948,18 +1229,18 @@ for month in range(1,12+1):
         if date(year,month,day).weekday() == 3:
             print(date(year,month,day).strftime('%d.%m.%Y'))
             break
-'''
+"""
 # Модуль 4.1
 # 10
-'''
+"""
 import sys
 
 for line in sys.stdin:
     sys.stdout.write(line.rstrip()[::-1])
     print()
-'''
+"""
 # 11
-'''
+"""
 import sys
 from datetime import date
 
@@ -968,9 +1249,9 @@ for Date in sys.stdin:
     y,m,d = map(int, Date.strip().split('-'))
     dates.append(date(y,m,d))
 sys.stdout.write(str((max(dates)-min(dates)).days))
-'''
+"""
 # 12
-'''
+"""
 import sys
 
 k, last_step = 0, 0
@@ -982,9 +1263,9 @@ if last_step % 2 == 0:
     sys.stdout.write(['Анри','Дима'][k%2==0])
 elif last_step % 2 != 0:
     sys.stdout.write(['Анри','Дима'][k%2!=0])
-'''
+"""
 # 13
-'''
+"""
 import sys
 
 students_height = [int(x) for x in sys.stdin]
@@ -994,23 +1275,23 @@ else:
     sys.stdout.write(f"Рост самого низкого ученика: {min(students_height)}\n")
     sys.stdout.write(f"Рост самого высокого ученика: {max(students_height)}\n")
     sys.stdout.write(f"Средний рост: {sum(students_height)/len(students_height)}")
-'''
+"""
 # 14
-'''
+"""
 import sys
 
 sys.stdout.write(str(sum([1 for s in sys.stdin if s.strip()[0]=='#'])))
-'''
+"""
 # 15
-'''
+"""
 import sys 
 
 for line in sys.stdin:
     if len( line.strip() ) == 0 or line.strip()[0] != '#':
         sys.stdout.write(line)
-'''
-# 16 
-'''
+"""
+# 16
+"""
 import sys
 
 res = []
@@ -1022,9 +1303,9 @@ for line in sys.stdin:
         condition = line.strip()
 
 [sys.stdout.write(elem[0] + '\n') for elem in sorted(list(filter(lambda x: x[1]==condition, res)), key=lambda x: (x[2],x[0]))]
-'''
+"""
 # 17
-'''
+"""
 import sys
 from datetime import datetime
 
@@ -1038,9 +1319,9 @@ elif res == sorted(list(set(res)), reverse=True):
     sys.stdout.write('DESC')
 else:
     sys.stdout.write('MIX')
-'''
+"""
 # 18
-'''
+"""
 import sys
 
 numbers = []
@@ -1060,8 +1341,670 @@ elif geom == len(numbers)-2:
     sys.stdout.write('Геометрическая прогрессия')
 else:
     sys.stdout.write('Не прогрессия')
+"""
+# Модуль 4.2
+# 12
+"""
+import csv
+
+with open('sales.csv', 'r', encoding='utf-8') as file:
+    File = list(csv.reader(file, delimiter=';'))
+    del File[0]
+    for product in File:
+        if int(product[1]) > int(product[2]):
+            print(product[0])
+"""
+# 13
+"""
+import csv 
+
+with open('salary_data.csv','r',encoding='utf-8') as file:
+    file = list(csv.reader(file,delimiter=';'))
+    del file[0]
+    average_salary = {}
+    for row in file:
+        average_salary[row[0]] = average_salary.get(row[0],[]) + [int(row[1])]
+    for company in average_salary:
+        average_salary[company] = sum(average_salary[company]) / len(average_salary[company])
+
+    print(*sorted(sorted(average_salary), key=lambda x: int(average_salary[x])), sep='\n')
+"""
+# 14
+"""
+import csv
+
+with open('deniro.csv','r',encoding='utf-8') as file:
+    file = list(csv.reader(file))
+    k = int(input())-1
+    if file[0][k].isdigit():
+        [print(*row, sep=',') for row in sorted(file, key=lambda x: int(x[k]))]
+    else:
+        [print(*row, sep=',') for row in sorted(file, key=lambda x: x[k])]
+"""
+# 15
+"""
+import csv
+
+def csv_columns(filename):
+    with open(filename, 'r', encoding='utf-8') as file:
+        file = csv.DictReader(file,delimiter=',')
+        res = {}
+        for row in file:
+            for key in row.keys():
+                res.setdefault(key,[]).append(row[key])
+        return res
+        
+
+
+csv_columns(input())
+"""
+# 16
+"""
+import csv
+
+with open('data.csv', 'r', encoding='utf-8', newline='') as file, open('domain_usage.csv', 'w', encoding='utf-8', newline='') as file_write:
+    file = list(csv.reader(file, delimiter=','))
+    del file[0]
+
+    file_write = csv.writer(file_write)
+    file_write.writerow(['domain','count'])
+    
+    my_dict = {}
+
+    for row in file:
+        domain = row[2].split('@')[1]
+        my_dict[domain] = my_dict.setdefault(domain,0) + 1
+
+    file_write.writerows( sorted( my_dict.items(), key=lambda x: (x[1], x[0]) ) )
+"""
+# 17
+"""
+import csv
+
+with open('wifi.csv', 'r', encoding='utf-8') as file:
+    file = list(csv.reader(file, delimiter=';'))
+    del file[0]
+    districts = {}
+    for row in file:
+        districts[row[1]] = districts.setdefault(row[1],0)+int(row[3])
+    [print(f'{key}: {value}') for key,value in sorted(districts.items(), key=lambda x: (-x[1],x[0]))]
+"""
+# 18
+"""
+import csv
+
+with open('titanic.csv', 'r', encoding='utf-8') as file:
+    file = list(csv.reader(file, delimiter=';'))
+    res = []
+    for row in file:
+        if row[0] == '1' and float(row[3]) < 18:
+            res.append(row)
+    [print(row[1]) for row in sorted(res, key=lambda x: x[2], reverse=True)]
+"""
+# 19
+"""
+import csv
+from datetime import datetime
+
+with open('name_log.csv','r', encoding='utf-8') as old_file, open('new_name_log.csv','w',encoding='utf-8',newline='') as new_file:
+    old_file = list(csv.reader(old_file))
+    del old_file[0]
+    new_log = {}
+    for row in sorted(old_file, key=lambda x: datetime.strptime(x[2],'%d/%m/%Y %H:%M')):
+        new_log[row[1]] = row
+    
+    new_file = csv.writer(new_file)
+    new_file.writerow(['username','email','dtime'])
+    new_file.writerows(sorted(new_log.values(), key=lambda x: x[1]))
+"""
+# 20
 '''
-# Модуль
+import csv
+
+
+def condense_csv(filename, id_name):
+    with open(filename, "r", encoding="utf-8") as file_read, open("condensed.csv", "w", encoding="utf-8", newline="") as file_write:
+        file_read = csv.reader(file_read)
+        features = {}
+        all_objects = []
+        for row in file_read:
+            features[row[1]] = features.setdefault(row[1], []) + [row]
+            if row[0] not in all_objects:
+                all_objects.append(row[0])
+
+        file_write = csv.writer(file_write)
+        first_line = [id_name] + [x for x in features.keys()]
+        file_write.writerow(first_line)
+        res = [[name] for name in all_objects]
+
+        for value in features.values():
+            for i in range(len(res)):
+                res[i].append(value[i][2])
+
+        file_write.writerows(res)
+
+
+
+
+text = """ball,color,purple
+ball,size,4
+ball,notes,it's round
+cup,color,blue
+cup,size,1
+cup,notes,none"""
+
+with open("data.csv", "w", encoding="utf-8") as file:
+    file.write(text)
+
+condense_csv("data.csv", id_name="ID")
+
+with open("condensed.csv", encoding="utf-8") as file:
+    print(file.read().strip())
+'''
+# 21
+"""
+import csv
+
+with open('student_counts.csv', 'r', encoding='utf-8') as file, open('sorted_student_counts.csv', 'w', encoding='utf-8', newline='') as file_write:
+    file = list(csv.reader(file))
+    first_line = file[0]
+    first_line_sorted = [file[0][0]] + sorted(file[0][1:], key=lambda x: (int(x.split('-')[0]), x.split('-')[1]))
+    list_key = []
+    for i in first_line_sorted:
+        list_key.append(first_line.index(i))
+
+    file_write = csv.writer(file_write)
+    for row in file:
+        line = []
+        for i in list_key:
+            line.append(row[i])
+        file_write.writerow(line)
+"""
+# 22
+"""
+import csv
+
+with open('prices.csv', 'r', encoding='utf-8') as file:
+    file = csv.DictReader(file, delimiter=';')
+    min_shop, min_product, min_price = 'XXX', 'XXX', 10**10
+
+    for shop_dict in file:
+        shop = shop_dict['Магазин']
+        for key,value in shop_dict.items():
+            if key == 'Магазин':
+                continue
+
+            if int(value) < min_price:
+                min_shop, min_product, min_price = shop, key, int(value)
+            elif int(value) == min_price and key < min_product:
+                min_shop, min_product, min_price = shop, key, int(value)
+            elif int(value) == min_price and key == min_product and shop < min_shop:
+                min_shop, min_product, min_price = shop, key, int(value)
+    
+    print(f'{min_product}: {min_shop}')
+"""
+"""
+import csv
+
+prices = []
+with open('prices.csv', encoding='utf-8') as infile:
+    reader = csv.reader(infile, delimiter=";")
+    products = reader.__next__()[1:]    # Отбрасываем строку "Магазин"
+    
+    for shop, *price_list in reader:
+        prices.extend(map(lambda price, product: (int(price), product, shop), price_list, products))
+
+print(f"{min(prices)[1]}: {min(prices)[2]}")
+"""
+# Модуль 4.4
+# 6
+"""
+import json, sys
+
+json_object = sys.stdin.read()
+json_object = json.loads(json_object)
+for key,value in json_object.items():
+    if type(value) == list:
+        print(f'{key}: {", ".join(map(str, value))}')
+    else:
+        print(f'{key}: {value}')
+"""
+# 7
+"""
+import json
+
+with open('data.json', 'r', encoding='utf-8') as file_r, open('updated_data.json', 'w', encoding='utf-8') as file_w:
+    file_r = json.load(file_r)
+    res = []
+    for row in file_r:
+        if type(row) == str:
+            res.append(row+'!')
+        elif type(row) == int:
+            res.append(row+1)
+        elif type(row) == int:
+            res.append(row+1)
+        elif type(row) == bool:
+            res.append(not row)
+        elif type(row) == list:
+            res.append(row*2)
+        elif type(row) == dict:
+            row["newkey"] = None
+            res.append(row)
+    json.dump(res, file_w, indent=3)
+"""
+# 8
+"""
+import json
+
+with open('data1.json','r',encoding='utf-8') as file:
+    file1_dict = json.load(file)
+with open('data2.json','r',encoding='utf-8') as file:
+    file2_dict = json.load(file)
+
+for key,value in file2_dict.items():
+    file1_dict[key] = value
+
+with open('data_merge.json', 'w', encoding='utf-8') as file:
+    json.dump(file1_dict, file, indent=3)
+"""
+# 9
+"""
+import json
+
+with open("people.json", "r", encoding="utf-8") as file, \
+    open('updated_people.json', 'w', encoding='utf-8') as file_w:
+    people_json = json.load(file)
+    
+    all_keys = set(max(people_json, key=len).keys())
+    for obj in people_json:
+        obj.update(dict.fromkeys(list(all_keys-set(obj.keys()))))
+    
+    json.dump(people_json, file_w, indent=3)
+"""
+# 10
+"""
+import json
+
+with open('countries.json','r',encoding='utf-8') as file_r, \
+    open('religion.json','w',encoding='utf-8') as file_w:
+    res_religions = {}
+    file_r = json.load(file_r)
+    for row in file_r:
+        res_religions.setdefault(row['religion'], []).append(row['country'])
+    json.dump(res_religions, file_w, indent=3)
+"""
+# 11
+"""
+import json, csv
+
+with open('playgrounds.csv','r',encoding='utf-8') as file_csv, \
+    open('addresses.json', 'w', encoding='utf-8') as file_json:
+    res_addresses = {}
+    file_csv = list(csv.reader(file_csv, delimiter=';'))
+    del file_csv[0]
+    for row in file_csv:
+        res_addresses.setdefault(row[1],{}).setdefault(row[2],[]).append(row[3])
+        
+    json.dump(res_addresses, file_json, indent=3, ensure_ascii=False)
+"""
+# 12
+"""
+import json, csv
+
+with open('students.json', 'r', encoding='utf-8') as file_read, \
+    open('data.csv', 'w', encoding='utf-8', newline='') as file_write:
+    file_read = json.load(file_read)
+    
+    file_write = csv.writer(file_write, delimiter=',')
+    file_write.writerow(['name','phone'])
+
+    res = []
+
+    for student in file_read:
+        if student['age'] >= 18 and student['progress'] >= 75:
+            res.append([student['name'], student['phone']])
+
+    file_write.writerows(sorted(res))
+"""
+# 13
+"""
+import json
+from datetime import timedelta
+
+with open('pools.json', 'r', encoding='utf-8') as file:
+    file = json.load(file)
+
+xy_res, address = (0,0), 'aq'
+
+for pool in file:
+    t1,t2 = pool['WorkingHoursSummer']['Понедельник'].split('-')
+    t1 = timedelta(hours=int(t1.split(':')[0]), minutes=int(t1.split(':')[1]))
+    t2 = timedelta(hours=int(t2.split(':')[0]), minutes=int(t2.split(':')[1]))
+    if t1<=timedelta(hours=10) and t2>=timedelta(hours=12):
+        if xy_res < (pool['DimensionsSummer']['Length'], pool['DimensionsSummer']['Width']):
+            xy_res = (pool['DimensionsSummer']['Length'], pool['DimensionsSummer']['Width'])
+            address = pool['Address']
+
+print(f'{xy_res[0]}x{xy_res[1]}', address, sep='\n')
+"""
+# 14
+"""
+import json, csv
+from datetime import datetime
+
+with open("exam_results.csv", "r", encoding="utf-8") as file_r:
+    names = ["name", "surname", "best_score", "date_and_time", "email"]
+    file_r = csv.DictReader(file_r.readlines()[1:], fieldnames=names)
+
+    res = {}
+    for row in file_r:
+        if row["email"] in res and (row["best_score"] > res[row["email"]]["best_score"] or \
+                                    row["best_score"] == res[row["email"]]["best_score"] and \
+                                    datetime.strptime(row["date_and_time"], "%Y-%m-%d %H:%M:%S") > datetime.strptime(res[row["email"]]["date_and_time"], "%Y-%m-%d %H:%M:%S") ):
+            res[row["email"]] = row
+
+        elif row["email"] not in res:
+            res[row["email"]] = row
+
+with open("best_scores.json", "w", encoding="utf-8", newline="") as file_w:
+    res = [value for value in dict(sorted(res.items())).values()]
+    for row_dict in res:
+        row_dict['best_score'] = int(row_dict['best_score'])
+    file_w = json.dump(res, file_w, indent=4)
+"""
+# 15
+'''
+import json
+
+with open("food_services.json", "r", encoding="utf-8") as file:
+    file = json.load(file)
+
+districts_count, company_count = {}, {}
+
+for row_dict in file:
+    districts_count[row_dict["District"]] = (
+        districts_count.get(row_dict["District"], 0) + 1
+    )
+    company_count[row_dict["OperatingCompany"]] = (
+        company_count.get(row_dict["OperatingCompany"], 0) + 1
+    )
+
+del company_count[""]
+
+print(*max(districts_count.items(), key=lambda x: x[1]), sep=": ")
+print(*max(company_count.items(), key=lambda x: x[1]), sep=': ')
+'''
+# 16
+'''
+import json
+
+with open('food_services.json','r',encoding='utf-8') as file:
+    file = json.load(file)
+
+res = {}
+
+for row_dict in file:
+    if row_dict['TypeObject'] not in res or (row_dict['SeatsCount'] > res[row_dict['TypeObject']][0]):
+        res[row_dict['TypeObject']] = (row_dict['SeatsCount'], row_dict['Name'])
+
+[print(key,f'{value[1]}, {value[0]}', sep=': ') for key,value in sorted(res.items())]
+'''
+# Модуль 4.5
+# 0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
