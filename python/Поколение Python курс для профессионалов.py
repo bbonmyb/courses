@@ -547,6 +547,41 @@ print('\n----------------------------------------------------\n')
 # --- Проверка файла на архив ZIP ---
 print(is_zipfile('C:/Users/user/Desktop/coding/git-lessons/test.zip'))  # True или False
 '''
+# ===== Работа с модулем pickle =====
+'''
+import pickle
+
+# Сохраняет любые Python объекты (списки, словари, функции, классы) в файл (сериализация) и загружает обратно (десериализация).
+# Аналогичен json, но поддерживает больше типов и только для Python.
+
+# --- Запись в файл ---
+with open('data.pkl', 'wb') as f:
+    pickle.dump(obj, f)      # obj — любой Python объект
+
+# --- Чтение из файла ---
+with open('data.pkl', 'rb') as f:
+    obj = pickle.load(f)
+
+# --- В строку и обратно ---
+b = pickle.dumps(obj)         # объект → байты
+obj = pickle.loads(b)         # байты → объект
+
+# --- Важно ---
+# Работает только с Python, расширение .pkl.
+# При загрузке файл должен быть безопасным (pickle не защищен).
+'''
+
+
+
+
+
+
+
+
+
+
+
+
 
 # задачи задачи задачи задачи задачи задачи задачи задачи задачи задачи задачи задачи задачи задачи задачи задачи задачи задачи задачи задачи задачи
 
@@ -1750,23 +1785,195 @@ for row_dict in file:
 [print(key,f'{value[1]}, {value[0]}', sep=': ') for key,value in sorted(res.items())]
 '''
 # Модуль 4.5
-# 0
+# 1
+"""
+from zipfile import ZipFile
+
+with ZipFile('workbook.zip') as zip_file:
+    k = 0
+    for file in zip_file.infolist():
+        if not file.is_dir():
+            k+=1
+    print(k)
+"""
+# 2
+"""
+from zipfile import ZipFile
+
+with ZipFile('test.zip') as zip_file:
+    res1, res2 = 0, 0
+    for file in zip_file.infolist():
+        res1 += int(file.file_size)
+        res2 += int(file.compress_size)
+
+print(f'Объем исходных файлов: {res1} байт(а)')
+print(f'Объем сжатых файлов: {res2} байт(а)')
+"""
+# 3
+"""
+from zipfile import ZipFile
+
+with ZipFile('workbook.zip') as zip_file:
+    res = (0, 'xxx')
+    for file in zip_file.infolist():
+        if not file.is_dir() and res[0] < 100-(file.compress_size / file.file_size * 100):
+            res = (100-(file.compress_size / file.file_size * 100), file.filename)
+print(res[1].split('/')[1])
+"""
+# 4
+'''
+from zipfile import ZipFile
+
+with ZipFile("workbook.zip") as zip_file:
+    res = []
+    for file in zip_file.infolist():
+        if not file.is_dir() and file.date_time > (2021, 11, 30, 14, 22, 0):
+            res.append(file.filename)
+    print(*sorted([s.split("/")[1] if "/" in s else s for s in res]), sep='\n')
+'''
+# 5
+'''
+from zipfile import ZipFile
+from datetime import datetime
+
+res = []
+with ZipFile('workbook.zip') as zip_file:
+    for file in zip_file.infolist():
+        if not file.is_dir():
+            if '/' in file.filename:
+                res.append([file.filename.split('/')[-1], datetime(*file.date_time), file.file_size, file.compress_size])
+            else:
+                res.append([file.filename, datetime(*file.date_time), file.file_size, file.compress_size])
+
+for s in sorted(res, key=lambda x: x[0]):
+    print(f"""{s[0]}
+  Дата модификации файла: {s[1]}
+  Объем исходного файла: {s[2]} байт(а)
+  Объем сжатого файла: {s[3]} байт(а)
+""")
+'''
+# 6
+'''
+from zipfile import ZipFile
+
+file_names = ['best_scores.json', 'exam_results.csv']
+
+with ZipFile('files.zip','w') as file_zip:
+    for name in file_names:
+        file_zip.write(name)
+'''
+# 7
+'''
+from zipfile import ZipFile, ZipInfo
+
+file_names = ['how to prove.pdf', 'fipi_demo_2022.pdf', 'Hollow Knight Silksong.exe',
+              'code.jpeg', 'stepik.png', 'readme.txt', 'shopping_list.txt',
+              'Alexandra Savior – Crying All the Time.mp3', 'homework.py', 'test.py']
+
+with ZipFile('files.zip','w') as file_zip:
+    for name in file_names:
+        if 100 >= ZipInfo.from_file(name).file_size:
+            file_zip.write(name)
+'''
+# 8
+'''
+from zipfile import ZipFile
+
+def extract_this(zip_name, *args):
+    with ZipFile(zip_name) as file_zip:
+        file_zip.extractall(members=args or None)
+'''
+# 9
+'''
+from zipfile import ZipFile
+import json
 
 
+res = []
+
+with ZipFile('data.zip') as file_zip:                           # открываем zip
+    for file_info in file_zip.infolist():                       # проходимся по всему содержимому
+        with file_zip.open(file_info) as file:                  # открываем файл
+            try:                                                # проверяем json ли это
+                file_json = json.load(file)                     # если ДА, то сразу читаем его
+            except:
+                continue
+            
+            if file_json['team'] == 'Arsenal':
+                res.append((file_json['first_name'], file_json['last_name']))
+
+[print(*player) for player in sorted(res)]
+'''
+# 10
+'''
+from zipfile import ZipFile
 
 
+def file_rounded_weight(weight):
+    for i in range(3):
+        if weight // 1024 >= 1:
+            weight = round(weight/1024)
+        else:
+            return f"{weight} {['B','KB','MB'][i]}"
+    return f"{weight} GB"
 
 
+with ZipFile('test.zip') as file_zip:
+    for file in file_zip.infolist():
+        if file.is_dir():
+            print(f"{'  ' * (file.filename.count('/')-1)}{file.filename.split('/')[-2]}")
+        else:
+            rounded_weight = file_rounded_weight(file.file_size)
+            print(f"{'  ' * (file.filename.count('/'))}{file.filename.split('/')[-1]} {rounded_weight}")
+            '''
+# 4.6
+# 2
+'''
+import pickle, sys
+
+with open(input(),'rb') as file:
+    my_func = pickle.load(file)
+
+args = [line.strip() for line in sys.stdin]
+print(my_func(*args))
+'''
+# 3
+'''
+import pickle
+
+def filter_dump(filename, objects, typename):
+    filtered = [i for i in objects if type(i) == typename]
+    with open(filename, 'wb') as file_w:
+        pickle.dump(filtered, file_w)
 
 
+filter_dump('numbers.pkl', [1, '2', '3', '3', '3', 4, '5'], int)
 
+with open('numbers.pkl','rb') as file:
+    print(pickle.load(file))
+'''
+# 4
+'''
+import pickle
 
+with open(input(),'rb') as file_r:
+    file_r = pickle.load(file_r)
+    
+file_r_int = [i for i in file_r if isinstance(i,int)]
 
-
-
-
-
-
+if type(file_r) is list and file_r_int:
+    checksum = min(file_r_int) * max(file_r_int)
+elif type(file_r) is dict and file_r_int:
+    checksum = sum(file_r_int)
+else:
+    checksum = 0
+    
+checksum_orig = int(input())
+if checksum == checksum_orig:
+    print('Контрольные суммы совпадают')
+else:
+    print('Контрольные суммы не совпадают')
+'''
 
 
 
