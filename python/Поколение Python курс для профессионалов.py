@@ -570,6 +570,150 @@ obj = pickle.loads(b)         # байты → объект
 # Работает только с Python, расширение .pkl.
 # При загрузке файл должен быть безопасным (pickle не защищен).
 '''
+# ===== Самостоятельное изучение Модуля OS (примеры в папке test_os)=====
+'''
+# Модуль os позволяет работать с операционной системой из Python.
+# Управляет файлами, папками, переменными среды и многое другое.
+
+# Получение информации об ОС
+import os
+print(os.name)          # Имя ОС: 'nt' для Windows, 'posix' для Unix, 'java' для Jython
+print(os.environ)       # Словарь с переменными окружения
+print(os.getenv('TMP')) # Получить конкретную переменную среды
+
+# Работа с директориями
+print(os.getcwd())         # Текущая рабочая директория
+os.chdir("D:/folder")      # Сменить рабочую директорию (пример Windows)
+os.mkdir("D:/folder")      # Создать папку
+os.makedirs("D:/a/b/c")    # Создать вложенные папки сразу
+os.rmdir("D:/folder")      # Удалить пустую папку
+os.removedirs("D:/a/b/c")  # Удалить вложенные пустые папки
+
+# Проверка путей
+print(os.path.exists("D:/test.txt"))   # Проверяет наличие файла или папки
+print(os.path.isfile("D:/test.txt"))   # Проверяет, что это файл
+print(os.path.isdir("D:/folder"))      # Проверяет, что это папка
+
+# Работа с файлами
+os.remove("D:/test.txt")                # Удалить файл
+os.rename("D:/oldname.txt", "D:/newname.txt")   # Переименование файла или папки
+os.renames("D:/a/b", "D:/x/y")         # Переименование вложенных папок
+
+# Получение информации о файлах и каталогах
+print(os.path.basename("D:/folder/file.txt"))  # Имя файла с расширением
+print(os.path.dirname("D:/folder/file.txt"))   # Путь к папке
+print(os.path.getsize("D:/file.txt"))          # Размер файла в байтах
+print(os.stat("D:/file.txt"))                   # Расширенная информация о файле
+
+# Содержимое каталогов
+print(os.listdir("D:/folder"))          # Список файлов и папок в каталоге
+for root, dirs, files in os.walk("D:/folder"):
+    print(root)                         # Текущая папка
+    print(dirs)                         # Список вложенных папок
+    print(files)                        # Список файлов
+
+# Запуск файлов и папок
+os.startfile("D:/file.txt")             # Открыть файл или папку стандартным приложением
+
+# Работа с путями
+print(os.path.split("D:/folder/file.txt"))  # Разделить на путь и имя файла
+print(os.path.join("D:/folder", "file.txt"))# Соединить путь и имя файла
+
+# Примечания
+# Для Windows пути лучше писать как raw-строки с префиксом r, чтобы не путать обратные слэши
+# Проверяйте существование файлов перед операциями, чтобы избежать ошибок
+# Модуль os универсален и кроссплатформен, помогает писать переносимый код
+
+'''
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1974,45 +2118,102 @@ if checksum == checksum_orig:
 else:
     print('Контрольные суммы не совпадают')
 '''
+# 4.7 Модуль os
+# A (задания с сайта - https://ejudge.179.ru/tasks/python/2027b/27-os.html)
+'''
+import os
+
+os.chdir("C:/Users/user/Desktop/coding/git-lessons/Primates/Haplorrhini/Simiiformes/Platyrrhini/Callitrichinae")
+res_files = [file for file in os.listdir() if os.path.isfile(file)]
+print(*sorted(res_files), sep='\n')
+'''
+# B 
+'''
+import os
+
+os.chdir('Primates')
+
+while len([name for name in os.listdir() if os.path.isdir(name)]) > 0:
+    os.chdir(min([name for name in os.listdir() if os.path.isdir(name)]))
+
+print( os.path.dirname(os.path.join(os.getcwd(), min([name for name in os.listdir() if os.path.isfile(name)]))))
+'''
+# C
+'''
+import os
+
+def find_file(file_name):
+    for root, dirs, files in os.walk('C:/Users/user/Desktop/coding/git-lessons/Primates'):
+        if file_name in files:
+            with open(os.path.join(root,file_name)) as file:
+                print(file.read().strip())
+            break
+
+find_file('Homo_sapiens.txt')
+'''
+# D
+'''
+import os
+
+def find_file(file_name):
+    for root, dirs, files in os.walk('C:/Users/user/Desktop/coding/git-lessons/Primates'):
+        if file_name in files:
+            print('Primates' + os.path.join(root,file_name).split('Primates')[1].replace('\\','/'))
+            break
+        
+
+find_file('Homo_sapiens.txt')
+'''
+# E
+'''
+import os
+
+res_files = []
+for root, dirs, files in os.walk('Primates'):
+    [res_files.append(file) for file in files]
+
+print(*sorted(res_files), sep='\n')
+'''
+# F
+'''
+import os
+
+for root, dirs, files in os.walk('Primates'):
+    dirs.sort()
+    print(root.replace('\\', '/'))
+'''
+# G
+'''
+import os
 
 
+def find_path_max_dir(path_file):
+    path_res_file = ('All dirs have 0 files', 0)
+    for root, dirs, files in os.walk(path_file):
+        if len(files) > path_res_file[1]:
+            path_res_file = (root, len(files))
+    relative_path = os.path.relpath(path_res_file[0], path_file)
+    
+    if relative_path == '.':
+        print(os.path.basename(path_file))
+    else:
+        print(os.path.join(os.path.basename(path_file), relative_path).replace('\\','/'))
 
+    
+find_path_max_dir(input())
+'''
+# H
+'''
+import os
 
+res = []
+for root, dirs, files in os.walk('Primates/Strepsirrhini/Lorisiformes/Lorisidae'):
+    for file in files:
+        with open(os.path.join(root,file)) as file_r:
+            res.append(file_r.read().strip()) 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+print(*sorted(res), sep='\n')
+'''
 
 
 
