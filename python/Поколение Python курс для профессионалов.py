@@ -2119,6 +2119,73 @@ else:
     print('Контрольные суммы не совпадают')
 '''
 # 4.7 Модуль os
+# === Практика ===
+'''
+import os
+#print(os.name)
+
+#print(os.environ)
+
+#print(os.getenv('TMP'))
+
+#print(os.getcwd()) 
+
+#os.chdir(r"C:/Users/user/Desktop/testtt")
+
+#print(os.path.exists("C:/Users/user/Desktop/coding/test_os/test.pkl"))
+#print(os.path.exists("test.pkl"))
+
+#print(os.path.isfile("folder_test"))
+#print(os.path.isfile("C:/Users/user/Desktop/coding/test_os/test.pkl"))
+#print(os.path.isfile("test.pkl"))
+
+#print(os.path.isdir("folder_test"))
+#print(os.path.isdir("C:/Users/user/Desktop/coding/test_os/test.pkl"))
+#print(os.path.isdir("test.pkl"))
+
+#os.mkdir("C:/Users/user/Desktop/coding/test_os/test_mkdir")
+#os.mkdir("test_mkdir_2")
+
+#os.makedirs("C:/Users/user/Desktop/coding/test_os/test_makedirs/test2_makedirs/test3_makedirs")
+#os.makedirs("test_makedirs_2/test2_makedirs_2/test3_makedirs_2")
+
+#os.remove("C:/Users/user/Desktop/coding/test_os/test_for_remove_2.txt")
+#os.remove('test_for_remove.txt')
+
+#os.rmdir('folder_for_remove')
+
+#os.removedirs("for_test_makedirs_2/for_test2_makedirs_2/for_test3_makedirs_2")
+
+#os.startfile("test_startfile.docx")
+#os.startfile("C:/Program Files (x86)/GamersFirst/APB Reloaded/Launcher/APBLauncher.exe")
+
+#print(os.path.basename("C:/Users/user/Desktop/coding/test_os/test_startfile.docx"))
+
+#print(os.path.dirname("C:/Users/user/Desktop/coding/test_os/test.pkl"))
+
+#print(os.path.getsize("C:/Users/user/Desktop/coding/test_os"))
+#print(os.path.getsize("test.pkl"))
+
+#os.rename("C:/Users/user/Desktop/coding/test_os/folder_test", "C:/Users/user/Desktop/coding/test_os/folder_test_rename")
+
+#os.renames("test_makedirs_2_rename/test2_makedirs_2_rename/test3_makedirs_2_rename", "test_makedirs_2/test2_makedirs_2/test3_makedirs_2")
+
+#print(os.listdir())
+#print(os.listdir("C:/Users/user/Desktop/coding/git-lessons"))
+
+
+#for root, directories, files in os.walk("C:/Users/user/Desktop/coding/git-lessons/python/test_os"):
+#    print(root)
+#    [print(directory) for directory in directories]
+#    [print(file) for file in files]
+
+
+#print(os.stat("C:/Usersuser/Desktop/coding/test_os"))
+
+#print(os.path.split("C:/Users/user/Desktop/coding/test_os"))
+
+#print(os.path.join("C:/Users/user/Desktop/coding", "test_os"))
+'''
 # A (задания с сайта - https://ejudge.179.ru/tasks/python/2027b/27-os.html)
 '''
 import os
@@ -2214,55 +2281,230 @@ for root, dirs, files in os.walk('Primates/Strepsirrhini/Lorisiformes/Lorisidae'
 
 print(*sorted(res), sep='\n')
 '''
+# 4.7 Модуль shutil
+# === Практика ===
+# rmtree(path) — рекурсивное удаление директории
+'''
+# Удаляет всю директорию path со всем её содержимым (поддиректориями и файлами).
+# Параметр ignore_errors позволяет игнорировать ошибки удаления.
+# Параметры onerror (устаревший) и onexc — обработчики ошибок, которые вызываются при неудаче удаления.
+# Не удаляет символические ссылки на каталоги, а удаляет сами каталоги.
+# На платформах с поддержкой файловых дескрипторов защищает от атак с символическими ссылками.
+# Игнорирует исключения FileNotFoundError для вложенных путей, кроме корня.
+# Вызывает событие аудита с аргументом path.
 
 
+import shutil, os
+
+# создаем директорию с вложенными файлами для примера
+os.makedirs('example1/example2/example3/example4')
+
+# удаляем директорию
+shutil.rmtree('example1')
+'''
+# copyfile(src, dst) - копирование содержимое одного файла в другой наиболее эффективным способом без переноса метаданных
+'''
+# Копирует только содержимое файла, без метаданных.
+# Перезаписывает dst, если такой файл существует.
+# Вызывает исключение SameFileError, если src и dst — один файл.
+# Не копирует специальные файлы (например, символические ссылки).
+# Параметр follow_symlinks определяет, копировать ли содержимое ссылки или саму ссылку.
+
+import shutil, os
+
+# создание файла и директории для тестов + просмотр содержимого
+os.mkdir('example')
+open('example/test_file.txt', 'w').close()
+print(os.listdir('example'))
+
+# копируем
+shutil.copyfile('example/test_file.txt', 'example/test_file.txt.copy')
+
+# смотрим содержимое директории + удаление после тестов
+print(os.listdir('example'))
+shutil.rmtree('example')
+'''
+# copy(src, dst) — копирование файла с правами доступа
+'''
+# Копирует содержимое файла и его права доступа (mode), но не другие метаданные.
+# Если dst — каталог, копирует файл в эту папку с тем же именем.
+# Поддерживает работу с символическими ссылками через параметр follow_symlinks.
+# Если follow_symlinks=False и src — символическая ссылка, копирует именно ссылку.
+# Возвращает путь к созданному файлу.
+
+import shutil, os
+
+# создание файла и директории для тестов + просмотр содержимого и прав доступа
+open('file_test.txt','w').close()
+os.mkdir('example')
+print(os.listdir('example'))
+print(os.stat('file_test.txt').st_mode)
 
 
+# копирование
+dests = shutil.copy('file_test.txt', 'example')
 
 
+# просмотр содержимого, прав доступа, пути + удаление после тестов
+print(os.listdir('example'))
+print(os.stat('file_test.txt').st_mode)
+print(dests)
+os.remove('file_test.txt')
+shutil.rmtree('example')
+'''
+# copy2(src, dst) — копирование файла с всеми метаданными 
+'''
+# Работает как copy(), но дополнительно сохраняет метаданные файла.
+# При follow_symlinks=False и если src — символическая ссылка, пытается скопировать все метаданные символической ссылки в новую ссылку.
+# Поддержка полного копирования метаданных зависит от платформы.
+# Никогда не вызывает ошибку, если не может сохранить все метаданные — сохраняет максимум доступного.
+# Использует copystat() для копирования метаданных.
 
 
+import os
+import shutil
+
+def show_file_info(filename):
+    stat_info = os.stat(filename)
+    print('Mode:', stat_info.st_mode)
+    print('Created:', stat_info.st_ctime)
+    print('Accessed:', stat_info.st_atime)
+    print('Modified:', stat_info.st_mtime)
 
 
+# создание файла и директории для тестов + просмотр метаданных
+open('shutil_copy2.py','w').close()
+os.mkdir('example')
+print('SOURCE:')
+show_file_info('shutil_copy2.py')
+print()
 
 
+# копирование
+shutil.copy2('shutil_copy2.py', 'example')
 
 
+# просмотр метаданных + удаление после тестов
+print('DESTINATION:')
+show_file_info('example/shutil_copy2.py')
+os.remove('shutil_copy2.py')
+shutil.rmtree('example')
+'''
+# copytree(src, dst) — рекурсивное копирование директории
+'''
+# Копирует весь каталог src (с поддиректориями и файлами) в каталог dst.
+# По умолчанию копирует все метаданные файлов и папок.
+# Можно указать функцию для пропуска некоторых файлов/папок (ignore).
+# Можно выбрать способ обработки символических ссылок (symlinks, follow_symlinks).
+# Можно разрешить существование целевой папки (dirs_exist_ok=True).
 
 
+import os
+import shutil
+
+# создание директории и файла в ней + просмотр содержимого
+os.mkdir('example_tree')
+open('example_tree/shutil_copytree.py','w').close()
+print('Содержимое example_tree:', os.listdir('example_tree'))
 
 
+# копирование
+shutil.copytree('example_tree', 'example_tree_copy')
 
 
+# просмотр содержимого + удаление после тестов
+print('Содержимое example_tree_copy:', os.listdir('example_tree_copy'))
+shutil.rmtree('example_tree')
+shutil.rmtree('example_tree_copy')
+'''
+# which(cmd) — поиск пути к исполняемому файлу
+'''
+# Ищет исполняемый файл cmd в системной переменной PATH.
+# Возвращает полный путь к найденному файлу или None, если файл не найден.
+# По умолчанию ищет только существующие и исполняемые файлы (mode=os.F_OK | os.X_OK).
+# Учитывает расширения из PATHEXT на Windows.
+# Можно явно задать переменную среды поиска (path).
 
 
+import shutil
+
+print(shutil.which('python'))
+print(shutil.which('git'))
+print(shutil.which('aaaaaaaa'))
+'''
+# disk_usage(path) — статистика использования диска
+'''
+# Возвращает общий, используемый и свободный объем дискового пространства по указанному пути.
+# Путь может быть файлом или каталогом.
+# Результат представлен в виде именованного кортежа с атрибутами total, used и free (в байтах).
+# Поддерживается на Unix и Windows системах.
 
 
+import shutil
+
+print(shutil.disk_usage('.'))
+'''
+# move(src, dst) — перемещение файла или каталога
+'''
+# Рекурсивно перемещает файл или каталог из src в dst.
+# Если dst — существующий каталог, перемещает внутрь него.
+# Если src и dst в одной файловой системе, используется os.rename().
+# Если в разных файловых системах, копирует с помощью copy_function (по умолчанию copy2) и удаляет src.
+# При работе с символическими ссылками создает новую ссылку на цель src и удаляет старую.
+# Возвращает путь к целевому местоположению dst.
+
+import shutil, os
+
+# Создали файл и изменили формат
+open('test_file.txt','w').close()
+os.rename('test_file.txt','test_file.mp3')
+
+# Создание файла и директории для теста
+open('test_file2.txt','w').close()
+os.mkdir('test_dir')
+
+# Смотрим содержание директории
+print(os.listdir('test_dir'))
+
+# Переносим файл в директорию
+shutil.move('test_file2.txt', 'test_dir')
+
+# Смотрим содержание директории + удаляем
+print(os.listdir('test_dir'))
+shutil.rmtree('test_dir')
+os.remove('test_file.mp3')
+'''
+# make_archive() — создание архива
+'''
+# make_archive(base_name, format, root_dir=None, base_dir=None, dry_run=False, owner=None, group=None, logger=None
+# Создает архив с именем base_name в формате format (zip, tar, gztar, bztar, xztar).
+# Архивирует содержимое каталога root_dir, начиная с base_dir (по умолчанию текущий каталог).
+# Возвращает имя созданного архива.
+# Параметр dry_run позволяет симулировать создание без записи архива.
+# owner и group используются при создании tar-архивов.
+# logger — объект для ведения журналов.
 
 
+import shutil, os
 
 
+result = shutil.make_archive('test_archive', 'zip', 'C:/Users/user/Desktop/testtt')
+print(result)
+'''
+# get_archive_formats() / get_unpack_formats() — получение форматов архивов
+'''
+# get_archive_formats() возвращает список поддерживаемых форматов для создания архивов.
+# Каждый элемент — кортеж (name, description) с именем формата и описанием.
+# get_unpack_formats() возвращает список форматов для распаковки архивов.
+# Каждый элемент — кортеж (name, extensions, description), где extensions — список расширений файлов.
+# По умолчанию доступны форматы: zip, tar, gztar, bztar, xztar.
+# Позволяет узнать, какие форматы поддерживает ваш текущий Python и платформа.
 
+import shutil
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+print(*shutil.get_archive_formats(), sep='\n')
+print(*shutil.get_unpack_formats(), sep='\n')
+'''
 
 
 
