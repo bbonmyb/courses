@@ -646,7 +646,73 @@ with shelve.open('mydata') as db:
     print(db['key1'])  # [1, 2, 3]
     print(db.get('key2'))  # {'a': 10}
 '''
+# ===== Модуль collections - namedtuple =====
+'''
+from collections import namedtuple
 
+# Создаем тип именованного кортежа с обязательными параметрами:
+# typename - имя создаваемого типа (строка)
+# field_names - имена полей (список/кортеж/строка с пробелами)
+Point = namedtuple(typename='Point', field_names=['x', 'y'])
+
+# Дополнительные необязательные параметры функции namedtuple():
+# rename=False — автоматически переименовывает поля с недопустимыми именами (по умолчанию False)
+# defaults=None — кортеж с значениями по умолчанию для последних N полей
+# module=None — имя модуля, которое добавится в атрибут __module__ созданного типа (для отладки и сериализации)
+
+# Пример создания:
+Rectangle = namedtuple('Rectangle', 'width height color', rename=True, defaults=(0, 'black'))
+
+# Создаем экземпляр
+rect1 = Rectangle(10, 20, 'red')
+rect2 = Rectangle(5)  # height=0, color='black' - значения по умолчанию
+
+# Доступ к полям именованного кортежа осуществляется по имени и индексу
+print(rect1.width)   # 10
+print(rect1[1])      # 20
+
+# Атрибуты именованных кортежей:
+# _fields - кортеж с именами полей
+print(Rectangle._fields)  # ('width', 'height', 'color')
+
+# _field_defaults - словарь: поле -> значение по умолчанию (если определены)
+print(Rectangle._field_defaults)  # {'height': 0, 'color': 'black'}
+
+# Методы:
+# _make(iterable) - создает namedtuple из итерируемого объекта
+points = Point._make([1, 2])
+
+# _replace(**kwargs) - вернет новый namedtuple с заменой указанных полей
+new_rect = rect1._replace(color='blue')
+
+# _asdict() - возвращает OrderedDict с именами и значениями полей
+d = rect1._asdict()
+
+# namedtuple — потомок tuple, наследует все методы кортежа и добавляет новые
+
+# Сравнение namedtuple с dict:
+# - Читаемость: ✔ у обеих структур
+# - Изменяемость: ✘ у namedtuple (immutable), ✔ у dict
+# - Память: ✔ у namedtuple (эффективнее), ✘ у dict (больше расход памяти)
+# - Производительность: ✔ у namedtuple
+
+# Пример полного использования namedtuple
+Car = namedtuple('Car', 'make model year', defaults=['Unknown', 2020])
+
+my_car = Car('Toyota', 'Corolla', 2022)
+print(my_car.model)       # Corolla
+
+my_new_car = my_car._replace(year=2025)
+print(my_new_car)         # Car(make='Toyota', model='Corolla', year=2025)
+
+# Преобразование в словарь
+print(my_car._asdict())   # OrderedDict([('make', 'Toyota'), ('model', 'Corolla'), ('year', 2022)])
+
+# Создание из списка
+data = ['Ford', 'Mustang', 1969]
+car_from_list = Car._make(data)
+print(car_from_list)
+'''
 
 
 
@@ -2522,23 +2588,66 @@ print(*shutil.get_archive_formats(), sep='\n')
 print(*shutil.get_unpack_formats(), sep='\n')
 '''
 
+# Модуль 6.2
+# 17
+'''
+from string import ascii_letters
+
+en_translator = str.maketrans(ascii_letters, input()*2)
+
+print(input().translate(en_translator))
+'''
+# Модуль 6.4
+# 10
+'''
+import pickle
+from collections import namedtuple
+
+Animal = namedtuple('Animal', ('name,family,sex,color'))
+
+with open('data.pkl', 'rb') as file_pkl:
+    for animal in pickle.load(file_pkl):
+        print(f"name: {animal.name}\nfamily: {animal.family}\nsex: {animal.sex}\ncolor: {animal.color}\n")
+'''
+# 11
+'''
+from collections import namedtuple
+
+User = namedtuple('User', ['name', 'surname', 'email', 'plan'])
+
+users = [User('Mary', 'Griffin', 'sonnen@yahoo.com', 'Basic'),
+         User('Brenda', 'Young', 'retoh@outlook.com', 'Silver'),
+         User('Kathleen', 'Lyons', 'balchen@att.net', 'Gold'),
+         User('Pamela', 'Hicks', 'corrada@sbcglobal.net', 'Silver'),
+         User('William', 'Townsend', 'kosact@verizon.net', 'Gold'),
+         User('Clayton', 'Morris', 'berserk@yahoo.com', 'Silver'),
+         User('Dorothy', 'Dennis', 'sequin@live.com', 'Gold'),
+         User('Tyler', 'Walker', 'noahb@comcast.net', 'Basic'),
+         User('Joseph', 'Moore', 'ylchang@sbcglobal.net', 'Silver'),
+         User('Kenneth', 'Richardson', 'tbusch@me.com', 'Bronze'),
+         User('Stephanie', 'Bush', 'neuffer@live.com', 'Gold'),
+         User('Gregory', 'Hughes', 'juliano@att.net', 'Basic'),
+         User('Tracy', 'Wallace', 'sblack@me.com', 'Silver'),
+         User('Russell', 'Smith', 'isaacson@comcast.net', 'Bronze'),
+         User('Megan', 'Patterson', 'hoangle@outlook.com', 'Basic')]
 
 
+users = sorted(users, key=lambda x: (['Gold','Silver','Bronze','Basic'].index(x.plan), x.email))
+for user in users:
+    print(f"{user.name} {user.surname}\n  Email: {user.email}\n  Plan: {user.plan}\n")
+'''
+# 12
+'''
+import csv
+from datetime import datetime
 
+with open('meetings.csv', 'r', encoding='UTF-8') as file_csv:
+    file_csv = list(csv.reader(file_csv, delimiter=','))
+    del file_csv[0]
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+file_csv = sorted(file_csv, key=lambda x: (datetime.strptime((x[2]+'.'+x[3]),'%d.%m.%Y.%H:%M')))
+[print(x[0], x[1]) for x in file_csv]
+'''
 
 
 
